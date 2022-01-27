@@ -97,6 +97,18 @@ fn('Ivan') //=> Hello, Ivan!
 Or change next function call:
 
 ```js
+let fn = spy((name: string) => {
+  console.log(`Hello, ${name}!`)
+})
+fn('Ivan') //=> Hello, Ivan!
+
+fn.willCall((name: string): string => {
+  console.log(`Hello, ${name.toUpperCase()}!`)
+})
+fn('Ivan') //=> Hello, IVAN!
+```
+
+```js
 fn.nextResult({ ok: false })
 ```
 

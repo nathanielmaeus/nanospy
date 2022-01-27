@@ -8,6 +8,7 @@ export interface Spy<
   results: ReturnType<Fn>[]
   nextError(error: Error): void
   nextResult(result: ReturnType<Fn>): void
+  willCall(nextClb: Fn): void
   restore(): void
 }
 

@@ -34,6 +34,9 @@ function spy(cb) {
   fn.nextResult = result => {
     fn.next = ['ok', result]
   }
+  fn.willCall = nextClb => {
+    cb = nextClb
+  }
 
   return fn
 }
@@ -44,6 +47,11 @@ function spyOn(obj, methodName, mock) {
   let fn = spy(mock.bind(obj))
   fn.restore = () => {
     obj[methodName] = origin
+  }
+
+  let prevWillCall = fn.willCall
+  fn.willCall = nextClb => {
+    prevWillCall(nextClb.bind(obj))
   }
 
   obj[methodName] = fn

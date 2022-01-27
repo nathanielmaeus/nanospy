@@ -49,12 +49,23 @@ test('can spy on method', () => {
   equal(method.calls, [['a'], ['b'], ['c'], ['d']])
   equal(method.results, ['a!', 'b!', 'C!', undefined])
 
-  method.restore()
-  equal(obj.method('e'), 'e!')
+  method.willCall((name: string) => {
+    calls.push(name)
+    return name + '!!'
+  })
+
+  equal(obj.method('e'), 'e!!')
   equal(calls, ['a', 'b', 'e'])
-  equal(method.callCount, 4)
-  equal(method.calls, [['a'], ['b'], ['c'], ['d']])
-  equal(method.results, ['a!', 'b!', 'C!', undefined])
+  equal(method.callCount, 5)
+  equal(method.calls, [['a'], ['b'], ['c'], ['d'], ['e']])
+  equal(method.results, ['a!', 'b!', 'C!', undefined, 'e!!'])
+
+  method.restore()
+  equal(obj.method('f'), 'f!')
+  equal(calls, ['a', 'b', 'e', 'f'])
+  equal(method.callCount, 5)
+  equal(method.calls, [['a'], ['b'], ['c'], ['d'], ['e']])
+  equal(method.results, ['a!', 'b!', 'C!', undefined, 'e!!'])
 })
 
 test('resets all spies', () => {
@@ -136,6 +147,14 @@ test('has spy for callback', () => {
   throws(fn, error)
   equal(fn.callCount, 4)
   equal(fn.results, [undefined, 'B!', undefined, undefined])
+
+  fn.willCall((name: string): string => {
+    return name + '!!'
+  })
+
+  equal(fn('c'), 'c!!')
+  equal(fn.callCount, 5)
+  equal(fn.results, [undefined, 'B!', undefined, undefined, 'c!!'])
 })
 
 test('supports spy with callback', () => {
@@ -156,6 +175,15 @@ test('supports spy with callback', () => {
   equal(fn.callCount, 2)
   equal(fn.calls, [['a'], ['b']])
   equal(fn.results, ['a!', 'B!'])
+
+  fn.willCall((name: string): string => {
+    return name + '!!'
+  })
+
+  equal(fn('c'), 'c!!')
+  equal(fn.callCount, 3)
+  equal(fn.calls, [['a'], ['b'], ['c']])
+  equal(fn.results, ['a!', 'B!', 'c!!'])
 })
 
 test.run()
